@@ -411,10 +411,8 @@
         btn.disabled = true;
         btn.textContent = "Signing in…";
 
-        const params = new URLSearchParams({ userId, password });
-        // NOTE: GET requests expose credentials in the URL (browser history, server logs).
-        // Consider POST with a request body for real authentication.
-        fetch(`/api/signin?${params}`, { method: "GET" })
+        const params = new URLSearchParams({ email: userId, password });
+        fetch(`/get?${params}`, { method: "GET" })
           .then((res) => {
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             return res.json();
