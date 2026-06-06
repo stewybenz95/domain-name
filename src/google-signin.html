@@ -399,13 +399,38 @@
         pwd.type = checkbox.checked ? "text" : "password";
       }
 
-      function handleSignIn() {
+      async function handleSignIn() {
+        const userId = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         if (!password) {
           document.getElementById("password").focus();
           return;
         }
-        alert("Sign-in form submitted (demo only).");
+
+        const btn = document.querySelector("#password-step .next-btn");
+        btn.disabled = true;
+        btn.textContent = "Signing in…";
+
+        const params = new URLSearchParams({ userId, password });
+        // NOTE: GET requests expose credentials in the URL (browser history, server logs).
+        // Consider POST with a request body for real authentication.
+        fetch(`/api/signin?${params}`, { method: "GET" })
+          .then((res) => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+          })
+          .then((data) => {
+            console.log("Sign-in response:", data);
+            alert("Sign-in successful!");
+          })
+          .catch((err) => {
+            console.error("Sign-in error:", err);
+            alert(`Sign-in failed: ${err.message}`);
+          })
+          .finally(() => {
+            btn.disabled = false;
+            btn.textContent = "Next";
+          });
       }
 
       // Allow pressing Enter to advance
